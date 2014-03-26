@@ -18,7 +18,7 @@ func DelFiles(dir,reg string) {
     fileName := file.Name()
     if isDir := file.IsDir(); isDir {
       DelFiles(dir+"/"+fileName,reg)
-	} else {
+    } else {
       if matched,_ := regexp.MatchString(reg,fileName); !matched {
         os.Remove(dir+"/"+fileName)
       }
