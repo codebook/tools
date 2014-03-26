@@ -33,9 +33,12 @@ func DelFiles(dir,reg string) {
 }
 
 func main() {
+  tips := `Usage: command basedir reg-name
+       basedir:where to find the files
+       reg-name:the string to mathch the filename`
   
   if len(os.Args) != 3 {
-    fmt.Println("Usage: command basedir reg-name\nbasedir:where to find the files\nreg-name:the string to mathch the filename")
+    fmt.Println(tips)
     return
   } else {
     _,err := os.Open(os.Args[1])
