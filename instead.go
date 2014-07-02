@@ -1,7 +1,6 @@
 package main
 
 import (
-	//"bufio"
 	"fmt"
 	"os"
 	"strings"
@@ -21,63 +20,24 @@ href="./assets/css.fonts.css" title="roboto">`
 	file,e := os.OpenFile(fpath,os.O_RDWR|os.O_CREATE,0666)
 	defer file.Close()
 	if e != nil {
-		fmt.Println("os.Open("+fpath+") error")
+		fmt.Println("os.Open("+fpath+") error:",e.Error())
 		return
 	}
-
-	//reader := bufio.NewReader(file)
-	//writer := bufio.NewWriter(file)
-
-	/*
-	var content string
-	k := 1
-	cont, err := reader.ReadString('\n')
-	for  err != nil {
-		fmt.Println(k)
-		k++
-		content += cont
-		cont, err = reader.ReadString('\n')
-	}
-
-	fmt.Println("1 content")
-	fmt.Println("2 before content: \n" + content)
-	fmt.Println("3 ")
-	*/
-
 	
 	readbytes := make([]byte,1024*1014*10) // 10M
-	//n, err := reader.Read(readbytes)
 	n, err := file.Read(readbytes)
 	if err != nil {
-		fmt.Println("io.ReadFull() is error")
+		fmt.Println("file.Read() error:",err.Error())
 	}
-	if n > 0 {
-		fmt.Println("n =", n)
-		//buf := bytes.NewBuffer(readbytes)
-		content := string(readbytes[:n])
-		fmt.Println("len(content) =", len(content))
-		/*
-		fmt.Println(len(content))
-		fmt.Println("1 content")
-		fmt.Println("2 before content: \n" + content)
-		fmt.Println("3 ")
-		fmt.Println(content)
-		fmt.Println("5 ")
-		
-		//content := string(bytes[:1024])
-		//content_aft := bytes[1024:]
-		*/	
-		//fmt.Println(string(readbytes[:1024]))
+	if n > 0 {	
+		content := string(readbytes[:n])		
 		content = strings.Replace(content, jsold_str, jsnew_str, -1)
 		content = strings.Replace(content, cssold_str, cssnew_str, -1)
 		
-		//file.Truncate(int64(0))
-		readbytes = []byte(content) 
-		//fmt.Println(string(readbytes[:1024]))
+		file.Truncate(int64(0)) //删除原先文件中的内容
 		file.Seek(0,0)  //移动文件的开始位置
-		m, write_err := file.Write(readbytes)
-		fmt.Println("m =", m)
-		fmt.Println("len(content) =", len(content))
+		readbytes = []byte(content) 
+		_, write_err := file.Write(readbytes)
 		if write_err != nil {
 			fmt.Println("file.Write() error", write_err.Error())
 		}
@@ -92,7 +52,7 @@ href="./assets/css.fonts.css" title="roboto">`
 }
 
 func main() {
-	fpath := "path/to/doc/file.html"
+	fpath := `D:\Android\adt-bundle-windows-x86_64-20140321\sdk\docs\legal_copy.html`
 	instead(fpath)
 
 }
