@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"path/filepath"
 )
 
 func instead(fpath string) {
@@ -51,8 +52,44 @@ href="./assets/css.fonts.css" title="roboto">`
 
 }
 
-func main() {
-	fpath := `D:\Android\adt-bundle-windows-x86_64-20140321\sdk\docs\legal_copy.html`
-	instead(fpath)
+func batchDeal(fpath string) {
+	abspath,e := filepath.Abs(fpath)
+	if e != nil {
+		fmt.Println("filepath.Abs("+abspath+") error:",e.Error())
+		return
+	}
+	file,e := os.Open(abspath)
+	defer file.Close()
+	if e != nil {
+		fmt.Println("os.Open("+abspath+") error:",e.Error())
+		return
+	}
+	fi, e := file.Stat()
+	if e != nil {
+		fmt.Println("file.Stat() error:", e.Error())
+		return
+	}
+	isDir := fi.IsDir()
+	if isDir {
+		fnames, e := file.Readdirnames(-1)
+		if e != nil {
+			fmt.Println("file.Readdirnames(-1) error:", e.Error())
+			return 
+		}
+		for _,fname := range fnames {
+			batchDeal(abspath+"\\"+fname)
+		}
+	} else {
+		if name := strings.ToLower(file.Name());  strings.HasSuffix(name,".html") {
+			instead(name)
+		}
+	}
 
+}
+
+func main() {
+	fpath := `D:\Android\adt-bundle-windows-x86_64-20140321\sdk\docs`
+	//instead(fpath)
+	//fpath := "docs"
+	batchDeal(fpath)
 }
